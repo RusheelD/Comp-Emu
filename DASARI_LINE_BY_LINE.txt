@@ -1,0 +1,314 @@
+row_0_1 = 0b0111000110001100
+row_0_2 = 0b0011001111011110
+row_1_1 = 0b0100101001010010
+row_1_2 = 0b0100101001001100
+row_2_1 = 0b0100101001010000
+row_2_2 = 0b0100101001001100
+row_3_1 = 0b0100101001001000
+row_3_2 = 0b0100101111001100
+row_4_1 = 0b0100101111000100
+row_4_2 = 0b0111101100001100
+row_5_1 = 0b0100101001000010
+row_5_2 = 0b0100101010001100
+row_6_1 = 0b0100101001010010
+row_6_2 = 0b0100101001001100
+row_7_1 = 0b0111001001001100
+row_7_2 = 0b0100101001011110
+    
+    
+    # Wait for 75 cycles
+    [0 for _ in range(75)]
+
+    # Load the first half of row 0 into A
+    + [row_0_1]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 4 into A
+    + [(63 << 6) + 4]
+
+    # Set the value of RAM[4032 + 4] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the second half of row 0 into A
+    + [row_0_2]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 5 into A
+    + [(63 << 6) + 5]
+
+    # Set the value of RAM[4032 + 5] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the first half of row 1 into A
+    + [row_1_1]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 6 into A
+    + [(63 << 6) + 6]
+
+    # Set the value of RAM[4032 + 6] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the second half of row 1 into A
+    + [row_1_2]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 7 into A
+    + [(63 << 6) + 7]
+
+    # Set the value of RAM[4032 + 7] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the first half of row 2 into A
+    + [row_2_1]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 8 into A
+    + [(63 << 6) + 8]
+
+    # Set the value of RAM[4032 + 8] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the second half of row 2 into A
+    + [row_2_2]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 9 into A
+    + [(63 << 6) + 9]
+
+    # Set the value of RAM[4032 + 9] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the first half of row 3 into A
+    + [row_3_1]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 10 into A
+    + [(63 << 6) + 10]
+
+    # Set the value of RAM[4032 + 10] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the second half of row 3 into A
+    + [row_3_2]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 11 into A
+    + [(63 << 6) + 11]
+
+    # Set the value of RAM[4032 + 11] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the first half of row 4 into A
+    + [row_4_1]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 12 into A
+    + [(63 << 6) + 12]
+
+    # Set the value of RAM[4032 + 12] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the second half of row 4 into A
+    + [row_4_2]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 13 into A
+    + [(63 << 6) + 13]
+
+    # Set the value of RAM[4032 + 13] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the first half of row 5 into A
+    + [row_5_1]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 14 into A
+    + [(63 << 6) + 14]
+
+    # Set the value of RAM[4032 + 14] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the second half of row 5 into A
+    + [row_5_2]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 15 into A
+    + [(63 << 6) + 15]
+
+    # Set the value of RAM[4032 + 15] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the first half of row 6 into A
+    + [row_6_1]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 16 into A
+    + [(63 << 6) + 16]
+
+    # Set the value of RAM[4032 + 16] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the second half of row 6 into A
+    + [row_6_2]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 17 into A
+    + [(63 << 6) + 17]
+
+    # Set the value of RAM[4032 + 17] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the first half of row 7 into A
+    + [row_7_1]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 18 into A
+    + [(63 << 6) + 18]
+
+    # Set the value of RAM[4032 + 18] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Load the second half of row 7 into A
+    + [row_7_2]
+
+    # D = 0 + A
+    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
+
+    # Load 4032 + 19 into A
+    + [(63 << 6) + 19]
+
+    # Set the value of RAM[4032 + 19] to D
+    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
+
+    # Wait for 150 cycles
+    + [0 for _ in range(150)]
+
+    # Load 4032 + 4 into A
+    + [(63 << 6) + 4]
+
+    # Set the value of RAM[4032 + 4] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 5 into A
+    + [(63 << 6) + 5]
+
+    # Set the value of RAM[4032 + 5] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 6 into A
+    + [(63 << 6) + 6]
+
+    # Set the value of RAM[4032 + 6] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 7 into A
+    + [(63 << 6) + 7]
+
+    # Set the value of RAM[4032 + 7] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 8 into A
+    + [(63 << 6) + 8]
+
+    # Set the value of RAM[4032 + 8] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 9 into A
+    + [(63 << 6) + 9]
+
+    # Set the value of RAM[4032 + 9] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 10 into A
+    + [(63 << 6) + 10]
+
+    # Set the value of RAM[4032 + 10] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 11 into A
+    + [(63 << 6) + 11]
+
+    # Set the value of RAM[4032 + 11] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 12 into A
+    + [(63 << 6) + 12]
+
+    # Set the value of RAM[4032 + 12] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 13 into A
+    + [(63 << 6) + 13]
+
+    # Set the value of RAM[4032 + 13] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 14 into A
+    + [(63 << 6) + 14]
+
+    # Set the value of RAM[4032 + 14] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 15 into A
+    + [(63 << 6) + 15]
+
+    # Set the value of RAM[4032 + 15] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 16 into A
+    + [(63 << 6) + 16]
+
+    # Set the value of RAM[4032 + 16] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 17 into A
+    + [(63 << 6) + 17]
+
+    # Set the value of RAM[4032 + 17] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 18 into A
+    + [(63 << 6) + 18]
+
+    # Set the value of RAM[4032 + 18] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Load 4032 + 19 into A
+    + [(63 << 6) + 19]
+
+    # Set the value of RAM[4032 + 19] to 0
+    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
+
+    # Wait for 75 cycles
+    + [0 for _ in range(75)]
