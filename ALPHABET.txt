@@ -1,0 +1,153 @@
+
+A = 64
+D = *A
+A = 3
+D = D << A
+A = 75
+*A = D
+
+A = 65
+D = *A
+A = 2
+D = D >> A
+A = 75
+D = D + *A
+A = 72
+D = D + *A
+A = 75
+*A = D
+
+A = 65
+D = *A
+A = 3
+D = D & A
+A = 2
+D = D << A
+A = 12
+D = A - D
+A = 76
+*A = D
+
+A = 66
+D = *A
+A = 3
+D = D << A
+A = 77
+*A = D
+
+A = 8
+D = A
+A = 78
+*A = D
+
+A = 70
+D = *A
+A = [offset] 
+D = D + A
+A = 79
+*A = D
+
+A = 78
+D = *A
+A = 8
+D = A - D
+A = 80
+*A = D
+
+A = 77
+A = *A
+A = A + D
+D = *A
+A = 81
+*A = D
+
+A = 67
+D = *A
+A = 3
+A = A - D
+D = A
+A = 2
+D = D << A
+A = 82
+*A = D
+
+A = 81
+D = *A
+A = 82
+A = *A
+D = D >> A
+A = 15
+D = D & A
+A = 76
+A = *A
+D = D << A
+A = 83
+*A = D
+
+A = 75
+D = *A
+A = 80
+A = *A
+D = A + D
+A = 84
+*A = D
+
+A = 83
+D = *A
+A = 84
+A = *A
+*A = D | *A
+
+A = 2
+D = A
+A = 75
+A = *A
+D = A + D
+A = 75
+*A = D
+
+A = 78
+*A = *A - 1
+D = *A
+A = 79
+A = *A
+D = D + 0; JGT
+
+A = 71
+A = *A
+A = A + 0; JMP
+
+
+RAM[75] = 4032 + 8 * RAM[64] + (RAM[65] // 4) 
+RAM[76] = 12 - 4 * (RAM[65] & 3)
+RAM[77] = 8 * RAM[66]
+RAM[78] = 8
+RAM[79] = RAM[70] + [offset] #38?
+RAM[80] = 8 - RAM[78]
+RAM[81] = RAM[RAM[77] + RAM[80]]
+RAM[82] = 4 * (3 - RAM[67])
+RAM[83] = (((RAM[81] >> RAM[82]) & 15) << RAM[76])
+RAM[84] = RAM[75] + RAM[80]
+RAM[RAM[84]] = RAM[83] | RAM[RAM[84]]
+RAM[75] = RAM[75] + 2
+
+RAM[78] = RAM[78] - 1
+if RAM[78] > 0: goto RAM[79]
+goto RAM[71]
+
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]

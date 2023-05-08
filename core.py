@@ -1,5 +1,67 @@
 import pyglet
 
+abcd_0 = 0b0111011100110110
+abcd_1 = 0b0101010101000101
+abcd_2 = 0b0101010101000101
+abcd_3 = 0b0101011001000101
+abcd_4 = 0b0101011101000101
+abcd_5 = 0b0111010101000101
+abcd_6 = 0b0101010101000101
+abcd_7 = 0b0101011100110110
+
+efgh_0 = 0b0111011101110101
+efgh_1 = 0b0100010001010101
+efgh_2 = 0b0100010001000101
+efgh_3 = 0b0100010001000101
+efgh_4 = 0b0110011001010101
+efgh_5 = 0b0100010001010111
+efgh_6 = 0b0100010001010101
+efgh_7 = 0b0111010001110101
+
+ijkl_0 = 0b0111011101010100
+ijkl_1 = 0b0010000101010100
+ijkl_2 = 0b0010000101010100
+ijkl_3 = 0b0010000101100100
+ijkl_4 = 0b0010000101010100
+ijkl_5 = 0b0010000101010100
+ijkl_6 = 0b0010010101010100
+ijkl_7 = 0b0111011101010111
+
+mnop_0 = 0b0101011101110111
+mnop_1 = 0b0111010101010101
+mnop_2 = 0b0111010101010101
+mnop_3 = 0b0101010101010111
+mnop_4 = 0b0101010101010100
+mnop_5 = 0b0101010101010100
+mnop_6 = 0b0101010101010100
+mnop_7 = 0b0101010101110100
+
+qrst_0 = 0b0111011101110111
+qrst_1 = 0b0101010101010010
+qrst_2 = 0b0101010101000010
+qrst_3 = 0b0101011101100010
+qrst_4 = 0b0101011000110010
+qrst_5 = 0b0101010100010010
+qrst_6 = 0b0110010101010010
+qrst_7 = 0b0001010101110010
+
+uvwx_0 = 0b0101010101010101
+uvwx_1 = 0b0101010101010101
+uvwx_2 = 0b0101010101010101
+uvwx_3 = 0b0101010101010010
+uvwx_4 = 0b0101010101010010
+uvwx_5 = 0b0101010101110101
+uvwx_6 = 0b0101010101110101
+uvwx_7 = 0b0111001001010101
+
+yz___0 = 0b0101011100000000
+yz___1 = 0b0101000100000000
+yz___2 = 0b0101000100000000
+yz___3 = 0b0101001100000000
+yz___4 = 0b0010011000000000
+yz___5 = 0b0010010000000000
+yz___6 = 0b0010010000000000
+yz___7 = 0b0010011100000000
 
 class Computer:
     def __init__(self, scale):
@@ -20,7 +82,7 @@ class Computer:
         self.__init__(self.scale)
 
     def run(self):
-        pyglet.clock.schedule_interval(self.clock_cycle, 0.001)
+        pyglet.clock.schedule_interval(self.clock_cycle, 0.00001)
         pyglet.app.run()
 
     def clock_cycle(self, dt):
@@ -56,6 +118,105 @@ class CPU:
         self.d = 0
         self.a_star = 0
         self.can_run = True
+        
+        self.memory.ram[0] = abcd_0
+        self.memory.ram[1] = abcd_1
+        self.memory.ram[2] = abcd_2
+        self.memory.ram[3] = abcd_3
+        self.memory.ram[4] = abcd_4
+        self.memory.ram[5] = abcd_5
+        self.memory.ram[6] = abcd_6
+        self.memory.ram[7] = abcd_7
+
+        self.memory.ram[8] = efgh_0
+        self.memory.ram[9] = efgh_1
+        self.memory.ram[10] = efgh_2
+        self.memory.ram[11] = efgh_3
+        self.memory.ram[12] = efgh_4
+        self.memory.ram[13] = efgh_5
+        self.memory.ram[14] = efgh_6
+        self.memory.ram[15] = efgh_7
+
+        self.memory.ram[16] = ijkl_0
+        self.memory.ram[17] = ijkl_1
+        self.memory.ram[18] = ijkl_2
+        self.memory.ram[19] = ijkl_3
+        self.memory.ram[20] = ijkl_4
+        self.memory.ram[21] = ijkl_5
+        self.memory.ram[22] = ijkl_6
+        self.memory.ram[23] = ijkl_7
+
+        self.memory.ram[24] = mnop_0
+        self.memory.ram[25] = mnop_1
+        self.memory.ram[26] = mnop_2
+        self.memory.ram[27] = mnop_3
+        self.memory.ram[28] = mnop_4
+        self.memory.ram[29] = mnop_5
+        self.memory.ram[30] = mnop_6
+        self.memory.ram[31] = mnop_7
+
+        self.memory.ram[32] = qrst_0
+        self.memory.ram[33] = qrst_1
+        self.memory.ram[34] = qrst_2
+        self.memory.ram[35] = qrst_3
+        self.memory.ram[36] = qrst_4
+        self.memory.ram[37] = qrst_5
+        self.memory.ram[38] = qrst_6
+        self.memory.ram[39] = qrst_7
+
+        self.memory.ram[40] = uvwx_0
+        self.memory.ram[41] = uvwx_1
+        self.memory.ram[42] = uvwx_2
+        self.memory.ram[43] = uvwx_3
+        self.memory.ram[44] = uvwx_4
+        self.memory.ram[45] = uvwx_5
+        self.memory.ram[46] = uvwx_6
+        self.memory.ram[47] = uvwx_7
+
+        self.memory.ram[48] = yz___0
+        self.memory.ram[49] = yz___1
+        self.memory.ram[50] = yz___2
+        self.memory.ram[51] = yz___3
+        self.memory.ram[52] = yz___4
+        self.memory.ram[53] = yz___5
+        self.memory.ram[54] = yz___6
+        self.memory.ram[55] = yz___7
+        
+        self.memory.ram[56] = 0
+        self.memory.ram[57] = 1
+        self.memory.ram[58] = 2
+        self.memory.ram[59] = 4
+        self.memory.ram[60] = 8
+        self.memory.ram[61] = 12
+        self.memory.ram[62] = 16
+        self.memory.ram[63] = 0xFFFF
+        
+        self.memory.ram[64] = 0     #row
+        self.memory.ram[65] = 0     #col
+        self.memory.ram[66] = 0     #letterset
+        self.memory.ram[67] = 0     #letteroffset
+        self.memory.ram[68] = 0     #reserved
+        self.memory.ram[69] = 0     #reserved
+        self.memory.ram[70] = 0     #line number of the function
+        self.memory.ram[71] = 0     #line to return to
+        
+        self.memory.ram[72] = 4032  #reserved
+        self.memory.ram[73] = 0     #reserved
+        self.memory.ram[74] = 0     #reserved
+        self.memory.ram[75] = 0     #reserved
+        self.memory.ram[76] = 0     #reserved
+        self.memory.ram[77] = 0     #reserved
+        self.memory.ram[78] = 0     #reserved
+        self.memory.ram[79] = 0     #reserved
+        
+        self.memory.ram[80] = 0     #reserved
+        self.memory.ram[81] = 0     #reserved
+        self.memory.ram[82] = 0     #reserved
+        self.memory.ram[83] = 0     #reserved
+        self.memory.ram[84] = 0     #reserved
+        self.memory.ram[85] = 0     #reserved
+        self.memory.ram[86] = 0     #reserved
+        self.memory.ram[87] = 0     #reserved
 
     def load_ROM(self, instructions: list[int]) -> None:
         self.rom.load(instructions)
@@ -175,14 +336,17 @@ def ALU_Instruction(A: int, A_STAR: int, D: int, I: int) -> tuple[int, bool, boo
         Y = A_STAR
     else:
         Y = A
+    
+    shr = (((I >> 13) & 1) == 1)
+    sh = (((I >> 14) & 1) == 1)
 
-    output = ALU(X, Y, zx, zy, sw, op1, op2, op3)
+    output = ALU(X, Y, sh, shr, zx, zy, sw, op1, op2, op3)
     j = condition(output, lt, eq, gt)
 
     return (output, dest_a, dest_d, dest_a_star, j)
 
 
-def ALU(X: int, Y: int, zx: bool, zy: bool, sw: bool, op1: bool, op2: bool, op3: bool) -> int:
+def ALU(X: int, Y: int, sh: bool, shr: bool, zx: bool, zy: bool, sw: bool, op1: bool, op2: bool, op3: bool) -> int:
     x_ = X
     y_ = Y
     output = None
@@ -192,6 +356,12 @@ def ALU(X: int, Y: int, zx: bool, zy: bool, sw: bool, op1: bool, op2: bool, op3:
         x_ = y_
         y_ = temp
 
+    if sh:
+        if shr:
+            x_ >>= y_
+        else:
+            x_ <<= y_
+            
     if zx:
         x_ = 0
 
@@ -271,9 +441,10 @@ row_17_1 = 0b0110010101110101
 row_17_2 = 0b0101011100000000
 
 computer = Computer(18)
+
 computer.load_program(
     # Wait for 75 cycles
-    [0 for _ in range(75)]
+    [0 for _ in range(10)]
 
     # Load the first half of row 0 into A
     + [row_0_1]
@@ -660,7 +831,7 @@ computer.load_program(
     + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
 
     # Wait for 150 cycles
-    + [0 for _ in range(150)]
+    + [0 for _ in range(40)]
 
     # Load 4032 + 4 into A
     + [(63 << 6) + 4]
@@ -855,6 +1026,6 @@ computer.load_program(
     + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
 
     # Wait for 75 cycles
-    + [0 for _ in range(75)]
+    + [0 for _ in range(20)]
 )
 computer.run()
