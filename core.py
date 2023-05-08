@@ -100,7 +100,7 @@ class Computer:
     def on_key_press(self, symbol, modifiers):
         if(symbol == pyglet.window.key.ESCAPE):
             pyglet.app.exit()
-        elif(symbol == pyglet.window.key.SPACE):
+        elif(symbol == pyglet.window.key.LSHIFT or symbol == pyglet.window.key.RSHIFT):
             self.cpu.memory.ram[68] = 1 << 0
         elif(symbol == pyglet.window.key.ENTER):
             self.cpu.memory.ram[68] = 1 << 1
@@ -156,6 +156,8 @@ class Computer:
             self.cpu.memory.ram[68] = 25 << 2
         elif(symbol == pyglet.window.key.Z):
             self.cpu.memory.ram[68] = 26 << 2
+        elif(symbol == pyglet.window.key.SPACE):
+            self.cpu.memory.ram[68] = 27 << 2
     
     def on_key_release(self, symbol, modifiers):
         self.cpu.memory.ram[68] = 0
