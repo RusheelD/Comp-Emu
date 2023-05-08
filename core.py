@@ -82,18 +82,83 @@ class Computer:
         self.__init__(self.scale)
 
     def run(self):
-        pyglet.clock.schedule_interval(self.clock_cycle, 0.00001)
+        pyglet.clock.schedule(self.clock_cycle)
         pyglet.app.run()
 
     def clock_cycle(self, dt):
-        self.cpu.run_cycle()
-        if not (self.cpu.can_run):
-            pyglet.app.exit()
+        self.cpu.check_screen_refresh()
+        if (self.cpu.can_run):
+            self.cpu.run_cycle()
 
     def on_draw(self):
-        self.window.clear()
-        self.refresh_display()
-        self.cpu.run_cycle()
+        if(self.cpu.refresh_screen):
+            self.window.clear()
+            self.refresh_display()
+            self.cpu.refresh_screen = not(self.cpu.can_run)
+        #self.cpu.run_cycle()
+
+    def on_key_press(self, symbol, modifiers):
+        if(symbol == pyglet.window.key.ESCAPE):
+            pyglet.app.exit()
+        elif(symbol == pyglet.window.key.SPACE):
+            self.cpu.memory.ram[68] = 1 << 0
+        elif(symbol == pyglet.window.key.ENTER):
+            self.cpu.memory.ram[68] = 1 << 1
+        elif(symbol == pyglet.window.key.A):
+            self.cpu.memory.ram[68] = 1 << 2
+        elif(symbol == pyglet.window.key.B):
+            self.cpu.memory.ram[68] = 2 << 2
+        elif(symbol == pyglet.window.key.C):
+            self.cpu.memory.ram[68] = 3 << 2
+        elif(symbol == pyglet.window.key.D):
+            self.cpu.memory.ram[68] = 4 << 2
+        elif(symbol == pyglet.window.key.E):
+            self.cpu.memory.ram[68] = 5 << 2
+        elif(symbol == pyglet.window.key.F):
+            self.cpu.memory.ram[68] = 6 << 2
+        elif(symbol == pyglet.window.key.G):
+            self.cpu.memory.ram[68] = 7 << 2
+        elif(symbol == pyglet.window.key.H):
+            self.cpu.memory.ram[68] = 8 << 2
+        elif(symbol == pyglet.window.key.I):
+            self.cpu.memory.ram[68] = 9 << 2
+        elif(symbol == pyglet.window.key.J):
+            self.cpu.memory.ram[68] = 10 << 2
+        elif(symbol == pyglet.window.key.K):
+            self.cpu.memory.ram[68] = 11 << 2
+        elif(symbol == pyglet.window.key.L):
+            self.cpu.memory.ram[68] = 12 << 2
+        elif(symbol == pyglet.window.key.M):
+            self.cpu.memory.ram[68] = 13 << 2
+        elif(symbol == pyglet.window.key.N):
+            self.cpu.memory.ram[68] = 14 << 2
+        elif(symbol == pyglet.window.key.O):
+            self.cpu.memory.ram[68] = 15 << 2
+        elif(symbol == pyglet.window.key.P):
+            self.cpu.memory.ram[68] = 16 << 2
+        elif(symbol == pyglet.window.key.Q):
+            self.cpu.memory.ram[68] = 17 << 2
+        elif(symbol == pyglet.window.key.R):
+            self.cpu.memory.ram[68] = 18 << 2
+        elif(symbol == pyglet.window.key.S):
+            self.cpu.memory.ram[68] = 19 << 2
+        elif(symbol == pyglet.window.key.T):
+            self.cpu.memory.ram[68] = 20 << 2
+        elif(symbol == pyglet.window.key.U):
+            self.cpu.memory.ram[68] = 21 << 2
+        elif(symbol == pyglet.window.key.V):
+            self.cpu.memory.ram[68] = 22 << 2
+        elif(symbol == pyglet.window.key.W):
+            self.cpu.memory.ram[68] = 23 << 2
+        elif(symbol == pyglet.window.key.X):
+            self.cpu.memory.ram[68] = 24 << 2
+        elif(symbol == pyglet.window.key.Y):
+            self.cpu.memory.ram[68] = 25 << 2
+        elif(symbol == pyglet.window.key.Z):
+            self.cpu.memory.ram[68] = 26 << 2
+    
+    def on_key_release(self, symbol, modifiers):
+        self.cpu.memory.ram[68] = 0
 
     def refresh_display(self):
         for r in range(32):
@@ -118,6 +183,8 @@ class CPU:
         self.d = 0
         self.a_star = 0
         self.can_run = True
+        self.refresh_screen = False
+        self.old_screen = self.memory.ram[4032:4096]
         
         self.memory.ram[0] = abcd_0
         self.memory.ram[1] = abcd_1
@@ -195,9 +262,9 @@ class CPU:
         self.memory.ram[65] = 0     #col
         self.memory.ram[66] = 0     #letterset
         self.memory.ram[67] = 0     #letteroffset
-        self.memory.ram[68] = 0     #reserved
-        self.memory.ram[69] = 0     #reserved
-        self.memory.ram[70] = 0     #line number of the function
+        self.memory.ram[68] = 0     #keyboard symbol
+        self.memory.ram[69] = 103   #line number of the disp function
+        self.memory.ram[70] = 0     #line number of the print function
         self.memory.ram[71] = 0     #line to return to
         
         self.memory.ram[72] = 4032  #reserved
@@ -217,6 +284,15 @@ class CPU:
         self.memory.ram[85] = 0     #reserved
         self.memory.ram[86] = 0     #reserved
         self.memory.ram[87] = 0     #reserved
+
+        self.memory.ram[88] = 0     #reserved
+        self.memory.ram[89] = 0     #reserved
+        self.memory.ram[90] = 0     #reserved
+        self.memory.ram[91] = 0     #reserved
+        self.memory.ram[92] = 0     #reserved
+        self.memory.ram[93] = 0     #reserved
+        self.memory.ram[94] = 0     #reserved
+        self.memory.ram[95] = 0     #reserved
 
     def load_ROM(self, instructions: list[int]) -> None:
         self.rom.load(instructions)
@@ -240,12 +316,18 @@ class CPU:
         if (self.counter.get() >= self.rom.length):
             self.can_run = False
 
-    def run_cycle(self):
+    def check_screen_refresh(self):
+        if(self.old_screen != self.memory.ram[4032:4096]):
+            self.old_screen = self.memory.ram[4032:4096]
+            self.refresh_screen = True
+    
+    def run_cycle(self):        
         addr = self.counter.get()
         inst = self.rom.get(addr)
         A, D, A_STAR = self.memory.get()
         R, self.a, self.d, self.a_star, j = Control_Unit(inst, A, D, A_STAR)
         A, D, A_STAR = self.memory.update(self.a, self.d, self.a_star, R)
+        #print(self.counter.get(), self.memory.ram[75:84], self.memory.get(), j, R, inst)
         self.counter.update(j, A)
 
         if (self.counter.get() >= self.rom.length):
@@ -284,7 +366,7 @@ class ROM:
         if (self.length + len(instructions) < 4096):
             for i in range(len(instructions)):
                 self.instructions[self.length + i] = instructions[i]
-            self.length += i
+            self.length += len(instructions)
 
     def clear(self) -> None:
         for i in range(4096):
@@ -405,627 +487,145 @@ def condition(X: int, lt: bool, eq: bool, gt: bool) -> bool:
     return output
 
 
-row_0_1 = 0b0111010101110101
-row_0_2 = 0b0111011101000000
-row_1_1 = 0b0101010101010101
-row_1_2 = 0b0100010001000000
-row_2_1 = 0b0101010101000101
-row_2_2 = 0b0100010001000000
-row_3_1 = 0b0111010101100101
-row_3_2 = 0b0100010001000000
-row_4_1 = 0b0110010100110111
-row_4_2 = 0b0110011001000000
-row_5_1 = 0b0101010100010101
-row_5_2 = 0b0100010001000000
-row_6_1 = 0b0101010101010101
-row_6_2 = 0b0100010001000000
-row_7_1 = 0b0101011101110101
-row_7_2 = 0b0111011101110000
-
-
-row_10_1 = 0b0110011101110111
-row_10_2 = 0b0111011100000000
-row_11_1 = 0b0101010101010101
-row_11_2 = 0b0101001000000000
-row_12_1 = 0b0101010101000101
-row_12_2 = 0b0101001000000000
-row_13_1 = 0b0101010101100101
-row_13_2 = 0b0111001000000000
-row_14_1 = 0b0101010100110101
-row_14_2 = 0b0110001000000000
-row_15_1 = 0b0101011100010111
-row_15_2 = 0b0101001000000000
-row_16_1 = 0b0101010101010101
-row_16_2 = 0b0101001000000000
-row_17_1 = 0b0110010101110101
-row_17_2 = 0b0101011100000000
-
 computer = Computer(18)
+computer.load_program(
+   [64]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [3]
+ + [(1 << 15) | (1 << 14) | (1 << 11) | (1 << 8) | (1 << 4)]
+ + [75]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ + [65]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [2]
+ + [(1 << 15) | (1 << 14) | (1 << 13) | (1 << 11) | (1 << 8) | (1 << 4)]
+ + [75]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 4)]
+ + [72]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 4)]
+ + [75]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ + [65]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [3]
+ + [(1 << 15) | (1 << 4)]
+ + [2]
+ + [(1 << 15) | (1 << 14) | (1 << 11) | (1 << 8) | (1 << 4)]
+ + [12]
+ + [(1 << 15) | (1 << 11) | (1 << 10) | (1 << 6) | (1 << 4)]
+ + [76]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ + [66]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [3]
+ + [(1 << 15) | (1 << 14) | (1 << 11) | (1 << 8) | (1 << 4)]
+ + [77]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 3)]
+ + [8]
+ + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [78]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 3)]
+ + [70]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [42]
+ + [(1 << 15) | (1 << 11) | (1 << 4)]
+ + [79]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ + [78]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [8]
+ + [(1 << 15) | (1 << 11) | (1 << 10) | (1 << 6) | (1 << 4)]
+ + [80]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ + [77]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
+ + [(1 << 15) | (1 << 11) | (1 << 5)]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [81]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ + [67]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [3]
+ + [(1 << 15) | (1 << 11) | (1 << 10) | (1 << 6) | (1 << 4)]
+ + [2]
+ + [(1 << 15) | (1 << 14) | (1 << 11) | (1 << 8) | (1 << 4)]
+ + [82]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ + [81]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [82]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
+ + [(1 << 15) | (1 << 14) | (1 << 13) | (1 << 11) | (1 << 8) | (1 << 4)]
+ + [15]
+ + [(1 << 15) | (1 << 4)]
+ + [76]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
+ + [(1 << 15) | (1 << 14) | (1 << 11) | (1 << 8) | (1 << 4)]
+ + [83]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ + [75]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [80]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
+ + [(1 << 15) | (1 << 11) | (1 << 5)]
+ + [84]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ + [83]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [84]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
+ + [(1 << 15) | (1 << 12) | (1 << 9) | (1 << 3)]
+ + [2]
+ + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [75]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
+ + [(1 << 15) | (1 << 11) | (1 << 4)]
+ + [75]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ + [78]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 6) | (1 << 3)]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [79]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 0)]
+ + [71]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
+ + [(1 << 15) | (1 << 2) | (1 << 1) | (1 << 0)]
+ )
+computer.load_program([])
+computer.cpu.rom.length = 300
+computer.cpu.counter.counter = 300
 
 computer.load_program(
-    # Wait for 75 cycles
-    [0 for _ in range(10)]
-
-    # Load the first half of row 0 into A
-    + [row_0_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 4 into A
-    + [(63 << 6) + 4]
-
-    # Set the value of RAM[4032 + 4] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 0 into A
-    + [row_0_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 5 into A
-    + [(63 << 6) + 5]
-
-    # Set the value of RAM[4032 + 5] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 1 into A
-    + [row_1_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 6 into A
-    + [(63 << 6) + 6]
-
-    # Set the value of RAM[4032 + 6] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 1 into A
-    + [row_1_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 7 into A
-    + [(63 << 6) + 7]
-
-    # Set the value of RAM[4032 + 7] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 2 into A
-    + [row_2_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 8 into A
-    + [(63 << 6) + 8]
-
-    # Set the value of RAM[4032 + 8] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 2 into A
-    + [row_2_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 9 into A
-    + [(63 << 6) + 9]
-
-    # Set the value of RAM[4032 + 9] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 3 into A
-    + [row_3_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 10 into A
-    + [(63 << 6) + 10]
-
-    # Set the value of RAM[4032 + 10] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 3 into A
-    + [row_3_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 11 into A
-    + [(63 << 6) + 11]
-
-    # Set the value of RAM[4032 + 11] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 4 into A
-    + [row_4_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 12 into A
-    + [(63 << 6) + 12]
-
-    # Set the value of RAM[4032 + 12] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 4 into A
-    + [row_4_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 13 into A
-    + [(63 << 6) + 13]
-
-    # Set the value of RAM[4032 + 13] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 5 into A
-    + [row_5_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 14 into A
-    + [(63 << 6) + 14]
-
-    # Set the value of RAM[4032 + 14] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 5 into A
-    + [row_5_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 15 into A
-    + [(63 << 6) + 15]
-
-    # Set the value of RAM[4032 + 15] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 6 into A
-    + [row_6_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 16 into A
-    + [(63 << 6) + 16]
-
-    # Set the value of RAM[4032 + 16] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 6 into A
-    + [row_6_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 17 into A
-    + [(63 << 6) + 17]
-
-    # Set the value of RAM[4032 + 17] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 7 into A
-    + [row_7_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 18 into A
-    + [(63 << 6) + 18]
-
-    # Set the value of RAM[4032 + 18] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 7 into A
-    + [row_7_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 19 into A
-    + [(63 << 6) + 19]
-
-    # Set the value of RAM[4032 + 19] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 10 into A
-    + [row_10_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 24 into A
-    + [(63 << 6) + 24]
-
-    # Set the value of RAM[4032 + 24] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 10 into A
-    + [row_10_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 25 into A
-    + [(63 << 6) + 25]
-
-    # Set the value of RAM[4032 + 25] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 11 into A
-    + [row_11_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 26 into A
-    + [(63 << 6) + 26]
-
-    # Set the value of RAM[4032 + 26] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 11 into A
-    + [row_11_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 27 into A
-    + [(63 << 6) + 27]
-
-    # Set the value of RAM[4032 + 27] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 12 into A
-    + [row_12_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 28 into A
-    + [(63 << 6) + 28]
-
-    # Set the value of RAM[4032 + 28] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 12 into A
-    + [row_12_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 29 into A
-    + [(63 << 6) + 29]
-
-    # Set the value of RAM[4032 + 29] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 13 into A
-    + [row_13_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 30 into A
-    + [(63 << 6) + 30]
-
-    # Set the value of RAM[4032 + 30] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 13 into A
-    + [row_13_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 31 into A
-    + [(63 << 6) + 31]
-
-    # Set the value of RAM[4032 + 31] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 14 into A
-    + [row_14_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 32 into A
-    + [(63 << 6) + 32]
-
-    # Set the value of RAM[4032 + 32] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 14 into A
-    + [row_14_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 33 into A
-    + [(63 << 6) + 33]
-
-    # Set the value of RAM[4032 + 33] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 15 into A
-    + [row_15_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 34 into A
-    + [(63 << 6) + 34]
-
-    # Set the value of RAM[4032 + 34] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 15 into A
-    + [row_15_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 35 into A
-    + [(63 << 6) + 35]
-
-    # Set the value of RAM[4032 + 35] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 16 into A
-    + [row_16_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 36 into A
-    + [(63 << 6) + 36]
-
-    # Set the value of RAM[4032 + 36] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 16 into A
-    + [row_16_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 37 into A
-    + [(63 << 6) + 37]
-
-    # Set the value of RAM[4032 + 37] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the first half of row 17 into A
-    + [row_17_1]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 38 into A
-    + [(63 << 6) + 38]
-
-    # Set the value of RAM[4032 + 38] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Load the second half of row 17 into A
-    + [row_17_2]
-
-    # D = 0 + A
-    + [(1 << 15) | (1 << 11) | (1 << 4) | (1 << 7)]
-
-    # Load 4032 + 39 into A
-    + [(63 << 6) + 39]
-
-    # Set the value of RAM[4032 + 39] to D
-    + [(1 << 15) | (1 << 3) | (1 << 11) | (1 << 8)]
-
-    # Wait for 150 cycles
-    + [0 for _ in range(40)]
-
-    # Load 4032 + 4 into A
-    + [(63 << 6) + 4]
-
-    # Set the value of RAM[4032 + 4] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 5 into A
-    + [(63 << 6) + 5]
-
-    # Set the value of RAM[4032 + 5] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 6 into A
-    + [(63 << 6) + 6]
-
-    # Set the value of RAM[4032 + 6] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 7 into A
-    + [(63 << 6) + 7]
-
-    # Set the value of RAM[4032 + 7] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 8 into A
-    + [(63 << 6) + 8]
-
-    # Set the value of RAM[4032 + 8] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 9 into A
-    + [(63 << 6) + 9]
-
-    # Set the value of RAM[4032 + 9] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 10 into A
-    + [(63 << 6) + 10]
-
-    # Set the value of RAM[4032 + 10] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 11 into A
-    + [(63 << 6) + 11]
-
-    # Set the value of RAM[4032 + 11] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 12 into A
-    + [(63 << 6) + 12]
-
-    # Set the value of RAM[4032 + 12] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 13 into A
-    + [(63 << 6) + 13]
-
-    # Set the value of RAM[4032 + 13] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 14 into A
-    + [(63 << 6) + 14]
-
-    # Set the value of RAM[4032 + 14] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 15 into A
-    + [(63 << 6) + 15]
-
-    # Set the value of RAM[4032 + 15] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 16 into A
-    + [(63 << 6) + 16]
-
-    # Set the value of RAM[4032 + 16] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 17 into A
-    + [(63 << 6) + 17]
-
-    # Set the value of RAM[4032 + 17] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 18 into A
-    + [(63 << 6) + 18]
-
-    # Set the value of RAM[4032 + 18] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 19 into A
-    + [(63 << 6) + 19]
-
-    # Set the value of RAM[4032 + 19] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 24 into A
-    + [(63 << 6) + 24]
-
-    # Set the value of RAM[4032 + 24] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 25 into A
-    + [(63 << 6) + 25]
-
-    # Set the value of RAM[4032 + 25] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 26 into A
-    + [(63 << 6) + 26]
-
-    # Set the value of RAM[4032 + 26] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 27 into A
-    + [(63 << 6) + 27]
-
-    # Set the value of RAM[4032 + 27] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 28 into A
-    + [(63 << 6) + 28]
-
-    # Set the value of RAM[4032 + 28] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 29 into A
-    + [(63 << 6) + 29]
-
-    # Set the value of RAM[4032 + 29] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 30 into A
-    + [(63 << 6) + 30]
-
-    # Set the value of RAM[4032 + 30] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 31 into A
-    + [(63 << 6) + 31]
-
-    # Set the value of RAM[4032 + 31] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 32 into A
-    + [(63 << 6) + 32]
-
-    # Set the value of RAM[4032 + 32] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 33 into A
-    + [(63 << 6) + 33]
-
-    # Set the value of RAM[4032 + 33] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 34 into A
-    + [(63 << 6) + 34]
-
-    # Set the value of RAM[4032 + 34] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 35 into A
-    + [(63 << 6) + 35]
-
-    # Set the value of RAM[4032 + 35] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 36 into A
-    + [(63 << 6) + 36]
-
-    # Set the value of RAM[4032 + 36] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 37 into A
-    + [(63 << 6) + 37]
-
-    # Set the value of RAM[4032 + 37] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 38 into A
-    + [(63 << 6) + 38]
-
-    # Set the value of RAM[4032 + 38] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Load 4032 + 39 into A
-    + [(63 << 6) + 39]
-
-    # Set the value of RAM[4032 + 39] to 0
-    + [(1 << 15) | (1 << 3) | (1 << 7) | (1 << 8)]
-
-    # Wait for 75 cycles
-    + [0 for _ in range(20)]
+   [2]                                              # row
+ + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]    # D = A
+ + [64]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ 
+ + [3]                                              # col   
+ + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]    # D = A
+ + [65]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ 
+ + [4]                                              # letterset
+ + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]    # D = A
+ + [66]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ 
+ + [1]                                              # letteroffset
+ + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]    # D = A
+ + [67]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ 
+ + [324]                                            # return address
+ + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]    # D = A
+ + [71]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ 
+ + [70]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
+ + [(1 << 15) | (1 << 2) | (1 << 1) | (1 << 0)]
+ 
+ + [0 for _ in range(100)]
 )
 computer.run()
