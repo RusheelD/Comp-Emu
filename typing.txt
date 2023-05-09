@@ -1,12 +1,17 @@
 A = 68
-D = A                   #handle shift pressed
+D = A*
+A = 69
+A = *A
+D; JLE
+A = 68                  #handle shift pressed
+D = A*                   
 A = 1
 D = D & A
 A = 88
 *A = D
 A = 69
 D = *A
-A = [space offset]
+A = 63                  #[shift offset]
 D = D + A
 A = 91
 *A = D
@@ -16,14 +21,14 @@ A = 91
 A = *A
 D; JGT
 A = 68                  #handle enter pressed
-D = A
+D = A*
 A = 2
 D = D & A
 A = 89
 *A = D
 A = 69
 D = *A
-A = [enter offset]
+A = 74                  #[enter offset]
 D = D + A
 A = 92
 *A = D
@@ -33,7 +38,7 @@ A = 92
 A = *A
 D; JGT
 A = 68                  #handle character pressed
-D = A
+D = A*
 A = 2
 D = D >> A - 1
 A = 90
