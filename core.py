@@ -68,7 +68,7 @@ class Computer:
         self.cpu = CPU()
         self.scale = scale
         self.window = pyglet.window.Window(
-            width=(32 * self.scale), height=(32 * self.scale), caption="Display")
+            width=(32 * self.scale), height=(32 * self.scale), caption="Display", config = pyglet.gl.Config(double_buffer=False))
         self.window.push_handlers(self)
         self.background_white = pyglet.image.SolidColorImagePattern(
             (255, 255, 255, 255)).create_image(self.scale, self.scale)
@@ -91,11 +91,16 @@ class Computer:
             self.cpu.run_cycle()
 
     def on_draw(self):
+        # self.cpu.check_screen_refresh()
+        # if(self.cpu.refresh_screen):
+        #     self.cpu.refresh_screen = False
+        #     print("refreshing")
         if(self.cpu.refresh_screen):
             self.window.clear()
             self.refresh_display()
-            self.cpu.refresh_screen = not(self.cpu.can_run)
-        #self.cpu.run_cycle()
+            self.cpu.refresh_screen = False
+        
+        # self.refresh_display()
 
     def on_key_press(self, symbol, modifiers):
         if(symbol == pyglet.window.key.ESCAPE):
@@ -319,8 +324,8 @@ class CPU:
             self.can_run = False
 
     def check_screen_refresh(self):
-        if(self.old_screen != self.memory.ram[4032:4096]):
-            self.old_screen = self.memory.ram[4032:4096]
+        if(self.memory.ram[4031] != 0):
+            self.memory.ram[4031] = 0
             self.refresh_screen = True
     
     def run_cycle(self):        
@@ -330,6 +335,7 @@ class CPU:
         R, self.a, self.d, self.a_star, j = Control_Unit(inst, A, D, A_STAR)
         A, D, A_STAR = self.memory.update(self.a, self.d, self.a_star, R)
         #print(self.counter.get(), self.memory.ram[75:84], self.memory.get(), j, R, inst)
+        #print(self.memory.ram[4031])
         self.counter.update(j, A)
 
         if (self.counter.get() >= self.rom.length):
@@ -590,9 +596,12 @@ computer.load_program(
  + [79]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 0)]
+ + [4031]
+ + [(1 << 15) | (1 << 11) | (1 << 9) | (1 << 7) | (1 << 3)]
  + [71]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
  + [(1 << 15) | (1 << 2) | (1 << 1) | (1 << 0)]
+ 
  )
 computer.load_program([])
 computer.cpu.rom.length = 300
