@@ -357,7 +357,6 @@ class Memory:
         self.ram = [0 for _ in range(4096)]
 
     def update(self, a: bool, d: bool, a_star: bool, X: int) -> tuple[int, int, int]:
-        #print("-->", self.register_A, X)
         if a:
             self.register_A = X
         if d:
