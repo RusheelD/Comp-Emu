@@ -334,16 +334,6 @@ class CPU:
         A, D, A_STAR = self.memory.get()
         R, self.a, self.d, self.a_star, j = Control_Unit(inst, A, D, A_STAR)
         A, D, A_STAR = self.memory.update(self.a, self.d, self.a_star, R)
-        # print(self.counter.get(), self.memory.ram[75:84], self.memory.get(), j, R, inst)
-        # print(self.memory.ram[4031])
-        # print(self.counter.get(),self.memory.ram[68] if self.memory.ram[68] < 3 else self.memory.ram[68] >> 2, self.memory.ram[64], self.memory.ram[65])
-        # print(self.memory.ram[64:68])
-        # if(self.counter.get() >= (113 + 65)):
-        #     print(self.counter.get() - 112, self.memory.ram[68] if self.memory.ram[68] < 3 else self.memory.ram[68] >> 2,
-        #           self.memory.ram[64], self.memory.ram[65], 
-        #           (self.memory.register_A, self.memory.register_D, self.memory.ram[self.memory.register_A & 4095]))
-        # if(self.counter.get() - 112 == 84):
-        #     print(inst, R)
         self.counter.update(j, A)
 
         if (self.counter.get() >= self.rom.length):
