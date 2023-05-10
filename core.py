@@ -334,9 +334,16 @@ class CPU:
         A, D, A_STAR = self.memory.get()
         R, self.a, self.d, self.a_star, j = Control_Unit(inst, A, D, A_STAR)
         A, D, A_STAR = self.memory.update(self.a, self.d, self.a_star, R)
-        #print(self.counter.get(), self.memory.ram[75:84], self.memory.get(), j, R, inst)
-        #print(self.memory.ram[4031])
-        #print(self.counter.get(), bin(R), self.memory.ram[68] if self.memory.ram[68] < 3 else self.memory.ram[68] >> 2, self.memory.ram[66], self.memory.ram[67])
+        # print(self.counter.get(), self.memory.ram[75:84], self.memory.get(), j, R, inst)
+        # print(self.memory.ram[4031])
+        # print(self.counter.get(),self.memory.ram[68] if self.memory.ram[68] < 3 else self.memory.ram[68] >> 2, self.memory.ram[64], self.memory.ram[65])
+        # print(self.memory.ram[64:68])
+        # if(self.counter.get() >= (113 + 65)):
+        #     print(self.counter.get() - 112, self.memory.ram[68] if self.memory.ram[68] < 3 else self.memory.ram[68] >> 2,
+        #           self.memory.ram[64], self.memory.ram[65], 
+        #           (self.memory.register_A, self.memory.register_D, self.memory.ram[self.memory.register_A & 4095]))
+        # if(self.counter.get() - 112 == 84):
+        #     print(inst, R)
         self.counter.update(j, A)
 
         if (self.counter.get() >= self.rom.length):
@@ -350,11 +357,12 @@ class Memory:
         self.ram = [0 for _ in range(4096)]
 
     def update(self, a: bool, d: bool, a_star: bool, X: int) -> tuple[int, int, int]:
+        #print("-->", self.register_A, X)
         if a:
             self.register_A = X
-        elif d:
+        if d:
             self.register_D = X
-        elif a_star:
+        if a_star:
             self.ram[self.register_A] = X
 
         return (self.register_A, self.register_D, self.ram[self.register_A & 4095])
@@ -438,14 +446,9 @@ def ALU_Instruction(A: int, A_STAR: int, D: int, I: int) -> tuple[int, bool, boo
 
 
 def ALU(X: int, Y: int, sh: bool, shr: bool, zx: bool, zy: bool, sw: bool, op1: bool, op2: bool, op3: bool) -> int:
-    x_ = X
-    y_ = Y
+    x_ = X if not(sw) else Y
+    y_ = Y if not(sw) else X
     output = None
-
-    if sw:
-        temp = x_
-        x_ = y_
-        y_ = temp
 
     if sh:
         if shr:
@@ -500,7 +503,7 @@ computer = Computer(18)
 computer.load_program(
    [64]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
- + [3]
+ + [4]
  + [(1 << 15) | (1 << 14) | (1 << 11) | (1 << 8) | (1 << 4)]
  + [75]
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
@@ -529,7 +532,7 @@ computer.load_program(
  + [3]
  + [(1 << 15) | (1 << 14) | (1 << 11) | (1 << 8) | (1 << 4)]
  + [77]
- + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 3)]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 8) | (1 << 3)]
  + [8]
  + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]
  + [78]
@@ -613,14 +616,20 @@ computer.load_program(
  + [(1 << 15) | (1 << 2) | (1 << 1) | (1 << 0)]
  
  )
-print(computer.cpu.rom.length, computer.cpu.rom.instructions[112:115])
+#print(computer.cpu.rom.length, computer.cpu.rom.instructions[112:115])
 computer.load_program(
    [68]
+ + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
+ + [95]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
+ + [68]
+ + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 7) | (1 << 3)]
+ + [95]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
  + [69]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 2) | (1 << 1)]
- + [68]
+ + [95]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]                  
  + [1]
  + [(1 << 15) | (1 << 4)]
@@ -628,7 +637,7 @@ computer.load_program(
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
  + [69]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
- + [69]                                                          
+ + [67]                                                          
  + [(1 << 15) | (1 << 11) | (1 << 4)]
  + [91]
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
@@ -637,7 +646,7 @@ computer.load_program(
  + [91]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 0)]
- + [68]                                                           
+ + [95]                                                           
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
  + [2]
  + [(1 << 15) | (1 << 4)]
@@ -645,7 +654,7 @@ computer.load_program(
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
  + [69]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
- + [80]                                                          
+ + [78]                                                          
  + [(1 << 15) | (1 << 11) | (1 << 4)]
  + [92]
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
@@ -654,15 +663,7 @@ computer.load_program(
  + [92]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 0)]
- + [6]
- + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]
- + [66]
- + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
- + [2]
- + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]
- + [67]
- + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
- + [68]                                                           
+ + [95]                                                           
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
  + [2]
  + [(1 << 15) | (1 << 14) | (1 << 13) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 4)]
@@ -687,7 +688,7 @@ computer.load_program(
  + [65]                                                           
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
  + [7]
- + [(1 << 15) | (1 << 11) | (1 << 10) | (1 << 4)]
+ + [(1 << 15) | (1 << 11) | (1 << 10) | (1 << 6) | (1 << 4)]
  + [69]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 2) | (1 << 1)]
@@ -697,8 +698,8 @@ computer.load_program(
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5) | (1 << 2) | (1 << 1) | (1 << 0)]
  + [64]                                                         
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
- + [7]
- + [(1 << 15) | (1 << 11) | (1 << 10) | (1 << 4)]
+ + [3]
+ + [(1 << 15) | (1 << 11) | (1 << 10) | (1 << 6) | (1 << 4)]
  + [69]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 2) | (1 << 1)]
@@ -714,6 +715,7 @@ computer.cpu.counter.counter = 300
 
 #print(computer.cpu.rom.length, computer.cpu.rom.instructions[112:115])
 
+'''
 computer.load_program(
    [3]                                              # row
  + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]    # D = A
@@ -747,12 +749,11 @@ computer.load_program(
  + [0 for _ in range(100)]
 )
 computer.run()
-
-
 '''
+
+
 computer.load_program(
-    [104]
-  + [(1 << 15) | (0b111)]
+    [69]
+  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5) | (0b111)]
 )
 computer.run()
-'''
