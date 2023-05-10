@@ -91,16 +91,10 @@ class Computer:
             self.cpu.run_cycle()
 
     def on_draw(self):
-        # self.cpu.check_screen_refresh()
-        # if(self.cpu.refresh_screen):
-        #     self.cpu.refresh_screen = False
-        #     print("refreshing")
         if(self.cpu.refresh_screen):
             self.window.clear()
             self.refresh_display()
             self.cpu.refresh_screen = False
-        
-        # self.refresh_display()
 
     def on_key_press(self, symbol, modifiers):
         if(symbol == pyglet.window.key.ESCAPE):
