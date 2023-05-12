@@ -4,28 +4,28 @@ abcd_0 = 0b0111011100110110
 abcd_1 = 0b0101010101000101
 abcd_2 = 0b0101010101000101
 abcd_3 = 0b0101011001000101
-abcd_4 = 0b0101011101000101
-abcd_5 = 0b0111010101000101
-abcd_6 = 0b0101010101000101
-abcd_7 = 0b0101011100110110
+abcd_4 = 0b0111010101000101
+abcd_5 = 0b0101010101000101
+abcd_6 = 0b0101011100110110
+abcd_7 = 0b0000000000000000
 
 efgh_0 = 0b0111011101110101
 efgh_1 = 0b0100010001010101
 efgh_2 = 0b0100010001000101
-efgh_3 = 0b0100010001000101
-efgh_4 = 0b0110011001010101
-efgh_5 = 0b0100010001010111
-efgh_6 = 0b0100010001010101
-efgh_7 = 0b0111010001110101
+efgh_3 = 0b0110011001010111
+efgh_4 = 0b0100010001010101
+efgh_5 = 0b0100010001010101
+efgh_6 = 0b0111010001110101
+efgh_7 = 0b0000000000000000
 
 ijkl_0 = 0b0111011101010100
 ijkl_1 = 0b0010000101010100
 ijkl_2 = 0b0010000101010100
 ijkl_3 = 0b0010000101100100
 ijkl_4 = 0b0010000101010100
-ijkl_5 = 0b0010000101010100
-ijkl_6 = 0b0010010101010100
-ijkl_7 = 0b0111011101010111
+ijkl_5 = 0b0010010101010100
+ijkl_6 = 0b0111011101010111
+ijkl_7 = 0b0000000000000000
 
 mnop_0 = 0b0101011101110111
 mnop_1 = 0b0111010101010101
@@ -33,42 +33,43 @@ mnop_2 = 0b0111010101010101
 mnop_3 = 0b0101010101010111
 mnop_4 = 0b0101010101010100
 mnop_5 = 0b0101010101010100
-mnop_6 = 0b0101010101010100
-mnop_7 = 0b0101010101110100
+mnop_6 = 0b0101010101110100
+mnop_7 = 0b0000000000000000
 
 qrst_0 = 0b0111011101110111
 qrst_1 = 0b0101010101010010
 qrst_2 = 0b0101010101000010
-qrst_3 = 0b0101011101100010
-qrst_4 = 0b0101011000110010
-qrst_5 = 0b0101010100010010
-qrst_6 = 0b0110010101010010
-qrst_7 = 0b0001010101110010
+qrst_3 = 0b0101011001110010
+qrst_4 = 0b0101010100010010
+qrst_5 = 0b0110010101010010
+qrst_6 = 0b0001010101110010
+qrst_7 = 0b0000000000000000
 
 uvwx_0 = 0b0101010101010101
 uvwx_1 = 0b0101010101010101
 uvwx_2 = 0b0101010101010101
 uvwx_3 = 0b0101010101010010
-uvwx_4 = 0b0101010101010010
+uvwx_4 = 0b0101010101110101
 uvwx_5 = 0b0101010101110101
-uvwx_6 = 0b0101010101110101
-uvwx_7 = 0b0111001001010101
+uvwx_6 = 0b0111001001010101
+uvwx_7 = 0b0000000000000000
 
 yz___0 = 0b0101011100000000
 yz___1 = 0b0101000100000000
 yz___2 = 0b0101000100000000
-yz___3 = 0b0101001100000000
-yz___4 = 0b0010011000000000
+yz___3 = 0b0111001000000000
+yz___4 = 0b0010010000000000
 yz___5 = 0b0010010000000000
-yz___6 = 0b0010010000000000
-yz___7 = 0b0010011100000000
+yz___6 = 0b0010011100000000
+yz___7 = 0b0000000000000000
 
 class Computer:
-    def __init__(self, scale):
+    def __init__(self, scale, screen_size):
         self.cpu = CPU()
         self.scale = scale
+        self.screen_size = screen_size
         self.window = pyglet.window.Window(
-            width=(32 * self.scale), height=(32 * self.scale), caption="Display", config = pyglet.gl.Config(double_buffer=False))
+            width=(self.screen_size * self.scale), height=(self.screen_size * self.scale), caption="Display", config = pyglet.gl.Config(double_buffer=False))
         self.window.push_handlers(self)
         self.background_white = pyglet.image.SolidColorImagePattern(
             (255, 255, 255, 255)).create_image(self.scale, self.scale)
@@ -79,7 +80,7 @@ class Computer:
         self.cpu.load_ROM(program)
 
     def reset(self):
-        self.__init__(self.scale)
+        self.__init__(self.scale, self.screen_size)
 
     def run(self):
         pyglet.clock.schedule(self.clock_cycle)
@@ -158,8 +159,8 @@ class Computer:
         elif(symbol == pyglet.window.key.SPACE):
             self.cpu.memory.ram[68] = 27 << 2
     
-    def on_key_release(self, symbol, modifiers):
-        self.cpu.memory.ram[68] = 0
+    # def on_key_release(self, symbol, modifiers):
+    #     self.cpu.memory.ram[68] = 0
 
     def refresh_display(self):
         for r in range(32):
@@ -169,10 +170,10 @@ class Computer:
                 pixel = (row >> column) & 1
                 if (pixel != 0):
                     self.background_white.blit(
-                        self.scale * (31 - column), self.scale * (31 - r))
+                        self.scale * ((self.screen_size - 1) - column), self.scale * ((self.screen_size - 1) - r))
                 else:
                     self.background_black.blit(
-                        self.scale * (31 - column), self.scale * (31 - r))
+                        self.scale * ((self.screen_size - 1) - column), self.scale * ((self.screen_size - 1) - r))
 
 
 class CPU:
@@ -185,7 +186,6 @@ class CPU:
         self.a_star = 0
         self.can_run = True
         self.refresh_screen = False
-        self.old_screen = self.memory.ram[4032:4096]
         
         self.memory.ram[0] = abcd_0
         self.memory.ram[1] = abcd_1
@@ -268,8 +268,8 @@ class CPU:
         self.memory.ram[70] = 0     #line number of the print function
         self.memory.ram[71] = 0     #line to return to
         
-        self.memory.ram[72] = 4032  #reserved
-        self.memory.ram[73] = 0     #reserved
+        self.memory.ram[72] = 4032  #screen start location
+        self.memory.ram[73] = 0     #draw screen flag
         self.memory.ram[74] = 0     #reserved
         self.memory.ram[75] = 0     #reserved
         self.memory.ram[76] = 0     #reserved
@@ -318,8 +318,8 @@ class CPU:
             self.can_run = False
 
     def check_screen_refresh(self):
-        if(self.memory.ram[4031] != 0):
-            self.memory.ram[4031] = 0
+        if(self.memory.ram[73] != 0):
+            self.memory.ram[73] = 0
             self.refresh_screen = True
     
     def run_cycle(self):        
@@ -482,7 +482,7 @@ def condition(X: int, lt: bool, eq: bool, gt: bool) -> bool:
     return output
 
 
-computer = Computer(18)
+computer = Computer(10, 32)
 computer.load_program(
    [64]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
@@ -592,14 +592,13 @@ computer.load_program(
  + [79]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 0)]
- + [4031]
+ + [73]
  + [(1 << 15) | (1 << 11) | (1 << 9) | (1 << 7) | (1 << 3)]
  + [71]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
  + [(1 << 15) | (1 << 2) | (1 << 1) | (1 << 0)]
  
  )
-#print(computer.cpu.rom.length, computer.cpu.rom.instructions[112:115])
 computer.load_program(
    [68]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
@@ -695,8 +694,6 @@ computer.load_program(
 )
 computer.cpu.rom.length = 300
 computer.cpu.counter.counter = 300
-
-#print(computer.cpu.rom.length, computer.cpu.rom.instructions[112:115])
 
 '''
 computer.load_program(

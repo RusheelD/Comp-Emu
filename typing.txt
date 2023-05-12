@@ -1,16 +1,16 @@
 A = 68
-D = A*
+D = *A
 A = 95
 *A = D
 A = 68
 *A = 0
 A = 95
-D = A*
+D = *A
 A = 69
 A = *A
 D; JLE
 A = 95                  #handle shift pressed
-D = A*                   
+D = *A                   
 A = 1
 D = D & A
 A = 88
@@ -27,7 +27,7 @@ A = 91
 A = *A
 D; JGT
 A = 95                  #handle enter pressed
-D = A*
+D = *A
 A = 2
 D = D & A
 A = 89
@@ -44,7 +44,7 @@ A = 92
 A = *A
 D; JGT
 A = 95                  #handle character pressed
-D = A*
+D = *A
 A = 2
 D = D >> A - 1
 A = 90
