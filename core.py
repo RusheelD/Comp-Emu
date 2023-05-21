@@ -163,10 +163,12 @@ class Computer:
     #     self.cpu.memory.ram[68] = 0
 
     def refresh_display(self):
-        for r in range(32):
-            row = (self.cpu.memory.ram[4032 + (2*r)] << 16
-                   | self.cpu.memory.ram[4032 + 2*r + 1])
-            for column in range(31, -1, -1):
+        for r in range(self.screen_size):
+            row = (self.cpu.memory.ram[self.cpu.memory.ram[72] + (4*r)] << (16 * 3)
+                   | self.cpu.memory.ram[self.cpu.memory.ram[72] + 4*r + 1] << (16 * 2)
+                   | self.cpu.memory.ram[self.cpu.memory.ram[72] + 4*r + 2] << (16 * 1)
+                   | self.cpu.memory.ram[self.cpu.memory.ram[72] + 4*r + 3] << (16 * 0))
+            for column in range((self.screen_size - 1), -1, -1):
                 pixel = (row >> column) & 1
                 if (pixel != 0):
                     self.background_white.blit(
@@ -268,7 +270,7 @@ class CPU:
         self.memory.ram[70] = 0     #line number of the print function
         self.memory.ram[71] = 0     #line to return to
         
-        self.memory.ram[72] = 4032  #screen start location
+        self.memory.ram[72] = 3840  #screen start location
         self.memory.ram[73] = 0     #draw screen flag
         self.memory.ram[74] = 0     #reserved
         self.memory.ram[75] = 0     #reserved
@@ -482,11 +484,11 @@ def condition(X: int, lt: bool, eq: bool, gt: bool) -> bool:
     return output
 
 
-computer = Computer(10, 32)
+computer = Computer(10, 64)
 computer.load_program(
    [64]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
- + [4]
+ + [5]
  + [(1 << 15) | (1 << 14) | (1 << 11) | (1 << 8) | (1 << 4)]
  + [75]
  + [(1 << 15) | (1 << 11) | (1 << 8) | (1 << 3)]
@@ -579,7 +581,7 @@ computer.load_program(
  + [84]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
  + [(1 << 15) | (1 << 12) | (1 << 9) | (1 << 3)]
- + [2]
+ + [4]
  + [(1 << 15) | (1 << 11) | (1 << 7) | (1 << 4)]
  + [75]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
@@ -669,7 +671,7 @@ computer.load_program(
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5) | (1 << 2) | (1 << 1) | (1 << 0)]
  + [65]                                                           
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
- + [7]
+ + [15]
  + [(1 << 15) | (1 << 11) | (1 << 10) | (1 << 6) | (1 << 4)]
  + [69]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
@@ -680,7 +682,7 @@ computer.load_program(
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5) | (1 << 2) | (1 << 1) | (1 << 0)]
  + [64]                                                         
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
- + [3]
+ + [7]
  + [(1 << 15) | (1 << 11) | (1 << 10) | (1 << 6) | (1 << 4)]
  + [69]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5)]
