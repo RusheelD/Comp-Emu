@@ -271,7 +271,7 @@ class CPU:
         self.memory.ram[71] = 0     #line to return to
         
         self.memory.ram[72] = 3840  #screen start location
-        self.memory.ram[73] = 0     #draw screen flag
+        self.memory.ram[73] = 1     #draw screen flag
         self.memory.ram[74] = 0     #reserved
         self.memory.ram[75] = 0     #reserved
         self.memory.ram[76] = 0     #reserved
@@ -484,7 +484,7 @@ def condition(X: int, lt: bool, eq: bool, gt: bool) -> bool:
     return output
 
 
-computer = Computer(10, 64)
+computer = Computer(12, 64)
 computer.load_program(
    [64]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
