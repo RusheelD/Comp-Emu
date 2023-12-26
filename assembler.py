@@ -65,45 +65,60 @@ def get_op_bits_from_value(value: str):
 
 def get_swz_bits_from_value(value: str):
     op = 0
-    
+    if(value == '0'):
+        return 6
     if(value == 'D'):
         return 4
     if(value == 'A' or value == 'A*' or value == '*A'):
         return 2
     
+    if('<<' in value):
+        operation = value.split('<<')
+        if(operation[0].strip() == ''):
+            op |= 2
+        if(operation[-1].strip()[0] == 'D'):
+            op |= 1
+    
+    if('>>' in value):
+        operation = value.split('<<')
+        if(operation[0].strip() == ''):
+            op |= 2
+        if(operation[-1].strip()[0] == 'D'):
+            op |= 1
+
     if('-' in value):
         operation = value.split('-')
         if(operation[0].strip() == ''):
             op |= 2
-        if(operation[-1].strip() == 'D'):
+        if(operation[-1].strip()[0] == 'D'):
             op |= 1
     if('+' in value):
         operation = value.split('+')
         if(operation[0].strip() == ''):
             op |= 2
-        if(operation[-1].strip() == 'D'):
+        if(operation[-1].strip()[0] == 'D'):
             op |= 1
     if('~' in value):
         operation = value.split('~')
-        if(operation[-1].strip() == 'D'):
+        if(operation[-1].strip()[0] != 'D'):
             op |= 1
     if('^' in value):
         operation = value.split('^')
         if(operation[0].strip() == ''):
             op |= 2
-        if(operation[-1].strip() == 'D'):
+        if(operation[-1].strip()[0] == 'D'):
             op |= 1    
     if('|' in value):
         operation = value.split('|')
         if(operation[0].strip() == ''):
             op |= 2
-        if(operation[-1].strip() == 'D'):
+        if(operation[-1].strip()[0] == 'D'):
             op |= 1
     if('&' in value):
         operation = value.split('&')
         if(operation[0].strip() == ''):
             op |= 2
-        if(operation[-1].strip() == 'D'):
+        if(operation[-1].strip()[0] == 'D'):
             op |= 1
     
     return op
@@ -165,7 +180,7 @@ with open(filename, 'r') as f:
         jump_bits = get_jump_bits_from_jump(jump)
         op_bits = get_op_bits_from_value(value)
         swz_bits = get_swz_bits_from_value(value)
-        inst = 0 if destination == 'A' and value.isdecimal() else 1
+        inst = 0 if destination == 'A' and value.isdecimal() and jump_bits == 0 else 1
 
         # print(destination, ",", value, ",", jump, ",", bin(dest_bits), ",", bin(jump_bits))
         instruction = inst << 15 | shift_bits << 13 | sel_bit << 12 | op_bits << 9 | swz_bits << 6 | dest_bits << 3 | jump_bits
@@ -173,7 +188,7 @@ with open(filename, 'r') as f:
         line = instruction if inst else int(value)
         lines.append(line)
 
-with open(filename.split('.')[0] + '-assembled.txt', 'x') as f:
+with open(filename.split('.')[0] + '-assembled.txt', 'w') as f:
     f.write('[' + str(lines[0]) + ']' + '\n')
     for line in lines[1:]:
         f.write('+ [' + str(line) + ']' + '\n')

@@ -96,6 +96,28 @@ class Computer:
             self.window.clear()
             self.refresh_display()
             self.cpu.refresh_screen = False
+    
+    def on_mouse_press(self, x, y, button, modifiers):
+        if(button == pyglet.window.mouse.LEFT):
+            self.cpu.memory.ram[59] = 1
+        elif(button == pyglet.window.mouse.MIDDLE):
+            self.cpu.memory.ram[60] = 1
+        elif(button == pyglet.window.mouse.RIGHT):
+            self.cpu.memory.ram[61] = 1
+    
+    def on_mouse_release(self, x, y, button, modifiers):
+        if(button == pyglet.window.mouse.LEFT):
+            self.cpu.memory.ram[59] = 0
+        elif(button == pyglet.window.mouse.MIDDLE):
+            self.cpu.memory.ram[60] = 0
+        elif(button == pyglet.window.mouse.RIGHT):
+            self.cpu.memory.ram[61] = 0
+    
+    def on_mouse_motion(self, x, y, dx, dy):
+        screen_x = x // self.scale
+        screen_y = (self.scale * self.screen_size - y) // self.scale
+        self.cpu.memory.ram[63] = screen_y
+        self.cpu.memory.ram[62] = screen_x
 
     def on_key_press(self, symbol, modifiers):
         if(symbol == pyglet.window.key.ESCAPE):
@@ -253,13 +275,13 @@ class CPU:
         self.memory.ram[55] = yz___7
         
         self.memory.ram[56] = 0
-        self.memory.ram[57] = 1
-        self.memory.ram[58] = 2
-        self.memory.ram[59] = 4
-        self.memory.ram[60] = 8
-        self.memory.ram[61] = 12
-        self.memory.ram[62] = 16
-        self.memory.ram[63] = 0xFFFF
+        self.memory.ram[57] = 0xFFFF
+        self.memory.ram[58] = 0
+        self.memory.ram[59] = 0     #mouse left down
+        self.memory.ram[60] = 0     #mouse middle down
+        self.memory.ram[61] = 0     #mouse right down
+        self.memory.ram[62] = 0     #mouse row
+        self.memory.ram[63] = 0     #mouse col
         
         self.memory.ram[64] = 0     #row
         self.memory.ram[65] = 0     #col
@@ -485,6 +507,57 @@ def condition(X: int, lt: bool, eq: bool, gt: bool) -> bool:
 
 
 computer = Computer(12, 64)
+computer.load_program([59]
++ [39056]
++ [77]
++ [35080]
++ [61]
++ [37392]
++ [0]
++ [32770]
++ [62]
++ [39056]
++ [2]
++ [49168]
++ [75]
++ [35080]
++ [63]
++ [39056]
++ [76]
++ [35080]
++ [4]
++ [57424]
++ [75]
++ [38928]
++ [72]
++ [38928]
++ [75]
++ [35080]
++ [76]
++ [39056]
++ [15]
++ [32784]
++ [1]
++ [49232]
++ [76]
++ [35080]
++ [77]
++ [39056]
++ [44]
++ [32770]
++ [76]
++ [39056]
++ [75]
++ [37384]
++ [0]
++ [32775]
++ [76]
++ [38480]
++ [75]
++ [36872]
++ [0]
++ [32775])
+"""
 computer.load_program(
    [64]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 4)]
@@ -694,6 +767,8 @@ computer.load_program(
  + [69]
  + [(1 << 15) | (1 << 12) | (1 << 11) | (1 << 7) | (1 << 5) | (1 << 2) | (1 << 1) | (1 << 0)]
 )
+"""
+
 computer.cpu.rom.length = 300
 computer.cpu.counter.counter = 300
 

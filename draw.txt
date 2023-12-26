@@ -1,0 +1,50 @@
+A = 59
+D = A*
+A = 77
+*A = D
+A = 61
+D = D | A*
+A = 0
+D; JEQ
+A = 62
+D = A*
+A = 2
+D = D << A
+A = 75
+*A = D
+A = 63
+D = A*
+A = 76
+*A = D
+A = 4
+D = D >> A
+A = 75
+D = D + A*
+A = 72
+D = D + A*
+A = 75
+*A = D
+A = 76
+D = *A
+A = 15
+D = D & A
+A = 1
+D = A << D
+A = 76
+*A = D
+A = 77
+D = *A
+A = 44
+D; JEQ
+A = 76
+D = *A
+A = 75
+*A = D | A*
+A = 0
+;JMP
+A = 76
+D = ~*A
+A = 75
+*A = D & A*
+A = 0
+;JMP
