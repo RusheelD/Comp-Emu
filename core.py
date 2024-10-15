@@ -284,14 +284,14 @@ class CPU:
         self.memory.ram[46] = uvwx_6
         self.memory.ram[47] = uvwx_7
 
-        self.memory.ram[48] = yz___0
-        self.memory.ram[49] = yz___1
-        self.memory.ram[50] = yz___2
-        self.memory.ram[51] = yz___3
-        self.memory.ram[52] = yz___4
-        self.memory.ram[53] = yz___5
-        self.memory.ram[54] = yz___6
-        self.memory.ram[55] = yz___7
+        self.memory.ram[48] = yz01_0
+        self.memory.ram[49] = yz01_1
+        self.memory.ram[50] = yz01_2
+        self.memory.ram[51] = yz01_3
+        self.memory.ram[52] = yz01_4
+        self.memory.ram[53] = yz01_5
+        self.memory.ram[54] = yz01_6
+        self.memory.ram[55] = yz01_7
         
         self.memory.ram[56] = 0
         self.memory.ram[57] = 0xFFFF
